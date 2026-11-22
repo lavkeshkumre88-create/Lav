@@ -1,0 +1,6 @@
+{
+  "name": "LavBox",
+  "description": "Premium Black & Purple cloud storage app with 100GB quota, file vault, media viewer, sharing links, backup, and admin analytics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

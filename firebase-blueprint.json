@@ -1,0 +1,176 @@
+{
+  "entities": {
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Cloud storage user profile, 100GB+ quota accounting, and backup preferences.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "User display name" },
+        "email": { "type": "string", "description": "User email address" },
+        "photoUrl": { "type": "string", "description": "Optional profile avatar URL" },
+        "planTier": { "type": "string", "enum": ["FREE", "PRO_1TB", "ULTRA_2TB"] },
+        "quotaBytes": { "type": "integer", "description": "Total storage quota in bytes (default 100GB)" },
+        "usedBytes": { "type": "integer", "description": "Total consumed storage in bytes" },
+        "totalUploads": { "type": "integer", "description": "Cumulative upload counter" },
+        "totalDownloads": { "type": "integer", "description": "Cumulative download counter" },
+        "role": { "type": "string", "enum": ["USER", "ADMIN"] },
+        "accountStatus": { "type": "string", "enum": ["ACTIVE", "SUSPENDED"] },
+        "autoBackupPhotos": { "type": "boolean" },
+        "autoBackupVideos": { "type": "boolean" },
+        "wifiOnlyBackup": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Server timestamp" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Server timestamp" }
+      },
+      "required": [
+        "userId",
+        "displayName",
+        "email",
+        "planTier",
+        "quotaBytes",
+        "usedBytes",
+        "totalUploads",
+        "totalDownloads",
+        "role",
+        "accountStatus",
+        "autoBackupPhotos",
+        "autoBackupVideos",
+        "wifiOnlyBackup",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "VaultFile": {
+      "title": "VaultFile",
+      "description": "Cloud vault file or folder record stored under a user's workspace.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "kind": { "type": "string", "enum": ["FOLDER", "PHOTO", "VIDEO", "PDF", "DOCUMENT"] },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "integer" },
+        "parentFolderId": { "type": "string" },
+        "favorite": { "type": "boolean" },
+        "trashed": { "type": "boolean" },
+        "cloudSynced": { "type": "boolean" },
+        "chunkCount": { "type": "integer" },
+        "sha256": { "type": "string" },
+        "localRelativePath": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "name",
+        "kind",
+        "mimeType",
+        "sizeBytes",
+        "parentFolderId",
+        "favorite",
+        "trashed",
+        "cloudSynced",
+        "chunkCount",
+        "sha256",
+        "localRelativePath",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "FileChunk": {
+      "title": "FileChunk",
+      "description": "Base64-encoded cloud byte chunk for small synced vault files.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "index": { "type": "integer" },
+        "data": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "index", "data", "createdAt"]
+    },
+    "SharedLink": {
+      "title": "SharedLink",
+      "description": "Shareable link with optional expiration timestamp and SHA-256 password hash.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "fileId": { "type": "string" },
+        "fileName": { "type": "string" },
+        "kind": { "type": "string", "enum": ["FOLDER", "PHOTO", "VIDEO", "PDF", "DOCUMENT"] },
+        "mimeType": { "type": "string" },
+        "sizeBytes": { "type": "integer" },
+        "passwordProtected": { "type": "boolean" },
+        "passwordHash": { "type": "string" },
+        "expiresAtMillis": { "type": "integer" },
+        "revoked": { "type": "boolean" },
+        "accessCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "userId",
+        "fileId",
+        "fileName",
+        "kind",
+        "mimeType",
+        "sizeBytes",
+        "passwordProtected",
+        "passwordHash",
+        "expiresAtMillis",
+        "revoked",
+        "accessCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminMarker": {
+      "title": "AdminMarker",
+      "description": "Server-managed administrator role marker keyed by UID.",
+      "type": "object",
+      "properties": {
+        "grantedBy": { "type": "string" }
+      }
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Immutable telemetry and security audit entry.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "action": { "type": "string", "enum": ["UPLOAD", "DOWNLOAD", "SHARE", "DELETE", "RESTORE", "PLAN_INQUIRY", "BACKUP"] },
+        "targetName": { "type": "string" },
+        "bytes": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "userEmail", "action", "targetName", "bytes", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "Per-user profile and 100GB storage quota document."
+    },
+    "/users/{userId}/files/{fileId}": {
+      "schema": { "$ref": "#/entities/VaultFile" },
+      "description": "User-isolated cloud vault files and folders."
+    },
+    "/users/{userId}/files/{fileId}/chunks/{chunkId}": {
+      "schema": { "$ref": "#/entities/FileChunk" },
+      "description": "Cloud byte chunks for synced files."
+    },
+    "/sharedLinks/{linkId}": {
+      "schema": { "$ref": "#/entities/SharedLink" },
+      "description": "Shareable file links with expiration, password protection, and revocation."
+    },
+    "/admins/{adminUid}": {
+      "schema": { "$ref": "#/entities/AdminMarker" },
+      "description": "Trusted admin role allowlist."
+    },
+    "/activityLogs/{logId}": {
+      "schema": { "$ref": "#/entities/ActivityLog" },
+      "description": "Immutable activity and admin analytics log entries."
+    }
+  }
+}

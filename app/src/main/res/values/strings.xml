@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">LavBox</string>
+    <string name="app_tagline">100 GB Encrypted Cloud Vault</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_files">Files</string>
+    <string name="nav_upload">Upload</string>
+    <string name="nav_shared">Shared</string>
+    <string name="nav_profile">Profile</string>
+    <string name="sign_in_google">Continue with Google</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="storage_title">Cloud Storage</string>
+    <string name="upload_files">Upload Files</string>
+    <string name="create_folder">New Folder</string>
+    <string name="empty_vault_title">Your LavBox Vault is Empty</string>
+    <string name="empty_vault_subtitle">Upload photos, videos, PDFs, or documents to start filling your 100 GB cloud space.</string>
+    <string name="admin_console">Admin Console</string>
+    <string name="upgrade_plans">Upgrade Storage</string>
+    <string name="backup_section_title">Automatic Backup</string>
+</resources>
